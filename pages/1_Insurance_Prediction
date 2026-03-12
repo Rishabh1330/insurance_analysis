@@ -1,0 +1,59 @@
+import streamlit as st
+import pandas as pd
+import joblib
+
+st.title("🔮 Insurance Cost Prediction")
+
+# Load model
+scaler = joblib.load("scaler.pkl")
+model = joblib.load("best_model.pkl")
+
+st.write("Enter your details below to estimate insurance cost.")
+
+with st.form("prediction_form"):
+
+    col1, col2 = st.columns(2)
+
+    with col1:
+        age = st.number_input("Age", 0, 100, 30)
+        bmi = st.number_input("BMI", 10.0, 60.0, 25.0)
+        children = st.number_input("Number of Children", 0, 8, 0)
+
+    with col2:
+        bloodpressure = st.number_input("Blood Pressure", 60, 200, 120)
+        gender = st.selectbox("Gender", ["Male", "Female"])
+        diabetic = st.selectbox("Diabetic", ["No", "Yes"])
+        smoker = st.selectbox("Smoker", ["No", "Yes"])
+
+    submit = st.form_submit_button("Predict Insurance Cost")
+
+if submit:
+
+    gender_encoded = 1 if gender == "Male" else 0
+    diabetic_encoded = 1 if diabetic == "Yes" else 0
+    smoker_encoded = 1 if smoker == "Yes" else 0
+
+    input_data = pd.DataFrame({
+        "age":[age],
+        "bmi":[bmi],
+        "children":[children],
+        "bloodpressure":[bloodpressure],
+        "smoker":[smoker_encoded],
+        "diabetic":[diabetic_encoded],
+        "gender":[gender_encoded]
+    })
+
+    num_cols = ["age","bmi","children","bloodpressure"]
+
+    input_data[num_cols] = scaler.transform(input_data[num_cols])
+
+    prediction = model.predict(input_data)[0]
+
+    st.metric("Estimated Insurance Cost", f"${prediction:,.2f}")
+
+    if prediction > 20000:
+        st.error("⚠️ High Insurance Risk")
+    elif prediction > 10000:
+        st.warning("⚠️ Medium Insurance Risk")
+    else:
+        st.success("✅ Low Insurance Risk")
