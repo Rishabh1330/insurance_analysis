@@ -112,16 +112,17 @@ Health Insurance Cost Prediction
 │   ├── 1_Insurance_Prediction.py
 │   └── 2_Data_Analytics_Dashboard.py
 │
-├── data
-│   └── insurance_data.csv
+├──insurance_data.csv
+|
+│──insurance_with_predictions  
 │
-├── models
-│   ├── best_model.pkl
-│   ├── scaler.pkl
-│   └── label_encoders.pkl
+├── best_model.pkl
+│    
+|── scaler.pkl
+│── label_encoders.pkl
 │
-├── powerbi
-│   └── insurance_dashboard.pbix
+├──insurance_dashboard.pbix 
+│ 
 │
 └── README.md
 ```
